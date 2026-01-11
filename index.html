@@ -8,7 +8,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="nav"id="logo">
+        <div class="nav" id="logo" >
+          <img src="navicon.png" id="navicon" alt="" height="50vh">
            <h1>
                Priyanshu<span>.in</span>
 
@@ -24,6 +25,8 @@
         </div>
         
     </div>
+
+    <div class="sidebar"></div>
     
     <section id="main-content">
 
@@ -220,4 +223,19 @@
 </footer>
 
 </body>
+<script>
+   const nav =document.getElementById("navicon");
+   const sidebar =document.querySelector(".sidebar");
+   const navlinks =document.getElementById("nav-links");
+
+   nav.addEventListener('click',()=>{
+    sidebar.innerHTML=navlinks.innerHTML;
+    sidebar.classList.toggle("sidebar"); 
+   
+    
+
+    
+    
+   })
+</script>
 </html>

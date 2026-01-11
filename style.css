@@ -36,6 +36,10 @@ body{
     color: #ffffff;
     
 }
+.nav img{
+  margin-left: -10%;
+  display: none;
+}
 .nav{
     display: flex;
     align-items: center;
@@ -49,6 +53,36 @@ body{
     text-decoration: none;
     font-weight: 500;
     transition: 0.5s;
+}
+.sidebar{
+    position: fixed;
+    top: 100;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10vh;
+    gap: 7vh;
+
+    width: 100%;
+    min-height: 85vh;
+    background-color: #0c0c0c;
+    padding: 20px;
+   
+    transition: 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar a{
+    color: #dfe1e8;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+.sidebar a:hover{
+    color: #FFB400;
+    transform: scale(1.2);
 }
 .main-content{
     display: flex;
@@ -214,6 +248,29 @@ body{
 @media (max-width: 600px) {
   #achievements h2 {
     font-size: 26px;
+  }
+  #navicon{
+   display: block;
+  }
+  .hero{
+    margin-top: 70vh;
+    
+
+    flex-direction: column-reverse;
+    
+  }
+  .hero-text{
+    width: 100%;
+
+  }
+  .achievements-grid{
+    flex-wrap: wrap;
+  }
+  #nav-links{
+    display: none;
+  }
+  #about{
+    margin-top: 25vh;
   }
 
   .card {
