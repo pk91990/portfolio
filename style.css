@@ -56,9 +56,11 @@ body{
 }
 .sidebar{
     position: fixed;
-    top: 100;
+    top: 0;
+    left: 0;
     
-    display: flex;
+    
+    display: none;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -67,10 +69,10 @@ body{
 
     width: 100%;
     min-height: 85vh;
-    background-color: #0c0c0c;
+    background-color: #0f0d0d;
     padding: 20px;
    
-    transition:all 6s ease;
+    transition:all 1s ease;
     z-index: 1000;
 }
 
