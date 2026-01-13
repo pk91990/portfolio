@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priyanshu | Portfolio</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  height: 100vh;
+  background: radial-gradient(circle at top, #0b0f1a, #05070f);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+/* 🔥 Fire Canvas */
+#fireCanvas {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Main Content */
+.hero {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8%;
+}
+
+/* Left Text */
+.hero-text h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin-bottom: 10px;
+}
+
+.hero-text span {
+  color: #f1a50c;
+}
+
+.hero-text p {
+  color: #bfc4d4;
+  max-width: 500px;
+  margin-bottom: 25px;
+}
+
+.hero-text button {
+  padding: 12px 28px;
+  background: #f1a50c;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Right Image */
+.hero-img img {
+  max-width: 320px;
+  filter: drop-shadow(0 0 40px rgba(241,165,12,0.4));
+}
+
+/* Dark overlay for depth */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(0,0,0,0.45), rgba(0,0,0,0.1));
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- 🔥 Bottom Fire Canvas -->
+<canvas id="fireCanvas"></canvas>
+
+<div class="overlay"></div>
+
+<!-- Main Content -->
+<section class="hero">
+  <div class="hero-text">
+    <h1>Hello, I'm <span>Priyanshu</span></h1>
+    <p>A passionate CSE student who loves designing and building creative digital solutions.</p>
+    <button>Let's Connect</button>
+  </div>
+
+  <div class="hero-img">
+    <!-- Replace with your own image -->
+    <img src="https://i.imgur.com/4AiXzf8.jpeg" alt="Priyanshu">
+  </div>
+</section>
+
+<script>
+/* 🔥 BOTTOM FIRE / EMBER EFFECT */
+const canvas = document.getElementById("fireCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let embers = [];
+const FIRE_HEIGHT = 200; // 🔥 height of fire zone from bottom
+
+class Ember {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height - Math.random() * FIRE_HEIGHT;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = -Math.random() * 1.5 - 0.5;
+    this.opacity = Math.random() * 0.6 + 0.3;
+    this.life = Math.random() * 120 + 60;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life--;
+    this.opacity -= 0.004;
+
+    if (this.life <= 0 || this.opacity <= 0 || this.y < canvas.height - FIRE_HEIGHT - 50) {
+      this.reset();
+    }
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(255, ${140 + Math.random()*80}, 0, ${this.opacity})`;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "rgba(255,120,0,0.9)";
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* Create embers */
+for (let i = 0; i < 120; i++) {
+  embers.push(new Ember());
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  embers.forEach(ember => {
+    ember.update();
+    ember.draw();
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
