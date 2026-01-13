@@ -67,12 +67,12 @@ body {
 .intro {
   font-size: clamp(2.5rem, 8vw, 5rem);
   letter-spacing: 0.3em;
-  color: #e50914;
+  color: #f1a50c;
   position: relative;
   opacity: 0;
   transform: scale(1.6) translateZ(80px);
   animation: reveal 1.5s ease forwards;
-  text-shadow: 0 0 40px rgba(229, 9, 20, 0.9);
+  text-shadow: 0 0 40px rgba(237, 171, 17, 0.9);
 }
 
 /* Light sweep */
@@ -113,9 +113,75 @@ body {
     transform: scale(0.9) translateZ(0);
   }
 }
+/* 🔊 Sound Popup */
+#soundPopup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-box {
+  background: #0f0f0f;
+  padding: 30px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(237, 171, 17, 0.6);
+}
+
+.popup-box h2 {
+  color: white;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.popup-box p {
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.popup-buttons button {
+  padding: 10px 25px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+#yesBtn {
+  background: #f1a50c;
+  color: black;
+}
+
+#noBtn {
+  background: #333;
+  color: white;
+}
+
 </style>
 </head>
 <body>
+  <!-- 🔊 Sound Permission Popup -->
+<div id="soundPopup">
+  <div class="popup-box">
+    <h2>Play Sound?</h2>
+    <p>This intro contains audio effects</p>
+    <div class="popup-buttons">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- Smoke -->
 <div class="smoke"></div>
@@ -127,7 +193,7 @@ body {
 <!-- 3D Scene -->
 <div class="scene">
   <div class="container" id="scene">
-    <div class="intro" id="text">HELLO</div>
+    <div class="intro" id="text">Hello</div>
   </div>
 </div>
 
@@ -141,62 +207,60 @@ const textElement = document.getElementById("text");
 const sound = document.getElementById("boomSound");
 const scene = document.getElementById("scene");
 
-let audioUnlocked = true;
+const popup = document.getElementById("soundPopup");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
 
-/* 🔓 Unlock audio after user interaction */
-function unlockAudio() {
-  sound.volume = 1.0;
-  sound.play().then(() => {
-    sound.pause();
-    sound.currentTime = 0;
-    audioUnlocked = true;
-    console.log("Audio unlocked");
-  }).catch(err => console.log("Unlock failed:", err));
+let soundEnabled = false;
 
-  document.removeEventListener("click", unlockAudio);
-  document.removeEventListener("touchstart", unlockAudio);
-}
+/* YES → enable sound */
+yesBtn.addEventListener("click", () => {
+  soundEnabled = true;
+  popup.style.display = "none";
+  startIntro();
+});
 
-document.addEventListener("click", unlockAudio);
-document.addEventListener("touchstart", unlockAudio);
+/* NO → silent mode */
+noBtn.addEventListener("click", () => {
+  soundEnabled = false;
+  popup.style.display = "none";
+  startIntro();
+});
 
-/* 🔊 Play sound from beginning */
+/* 🔊 Play sound safely */
 function playSound() {
-  if (!audioUnlocked) return;
-
+  if (!soundEnabled) return;
   sound.pause();
   sound.currentTime = 0;
-  sound.play().catch(err => console.log("Play blocked:", err));
+  sound.play().catch(err => console.log("Audio blocked:", err));
 }
 
-/* 🔁 Text Animation with sound */
+/* 🚀 Start Intro */
+function startIntro() {
+  playSound(); // first hit
+
+  animateText("I AM", 1800);
+  animateText("PRIYANSHU", 3600);
+
+  setTimeout(() => {
+    textElement.classList.add("fade-out");
+  }, 5500);
+
+  setTimeout(() => {
+    window.location.href = "main.html";
+  }, 6500);
+}
+
+/* 🔁 Text Animation */
 function animateText(newText, delay) {
   setTimeout(() => {
     textElement.classList.remove("intro");
     void textElement.offsetWidth;
     textElement.textContent = newText;
     textElement.classList.add("intro");
-
-    playSound(); // 🔊 sound on every animation
+    playSound(); // 🔊 sound on each animation
   }, delay);
 }
-
-/* Initial sound when page starts (after unlock) */
-setTimeout(() => playSound(), 100);
-
-/* Text sequence */
-animateText("I AM", 1800);
-animateText("PRIYANSHU", 3600);
-
-/* Fade out */
-setTimeout(() => {
-  textElement.classList.add("fade-out");
-}, 5500);
-
-/* Redirect */
-setTimeout(() => {
-  window.location.href = "main.html";
-}, 6500);
 
 /* 🌌 Desktop Parallax */
 document.addEventListener("mousemove", (e) => {
@@ -204,22 +268,8 @@ document.addEventListener("mousemove", (e) => {
   const y = (window.innerHeight / 2 - e.clientY) / 30;
   scene.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
 });
-
-/* 📱 Ultra-Smooth iPhone Motion */
-let smoothX = 0, smoothY = 0;
-window.addEventListener("deviceorientation", (e) => {
-  if (!e.gamma || !e.beta) return;
-
-  const maxTilt = 12;
-  const targetX = Math.max(-maxTilt, Math.min(maxTilt, e.gamma));
-  const targetY = Math.max(-maxTilt, Math.min(maxTilt, e.beta - 30));
-
-  smoothX += (targetX - smoothX) * 0.08;
-  smoothY += (targetY - smoothY) * 0.08;
-
-  scene.style.transform = `rotateY(${smoothX}deg) rotateX(${smoothY}deg)`;
-}, true);
 </script>
+
 
 
 
